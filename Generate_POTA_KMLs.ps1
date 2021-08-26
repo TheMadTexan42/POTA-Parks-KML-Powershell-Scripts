@@ -1,11 +1,12 @@
-# This script takes the CSV list of parks available on the POTA website;
-#          https://pota.app/all_parks_ext.csv
+# This script takes the CSV list of parks available from the Parks on the Air System
 # and parses it into one or more KML files for use with Google Earth
 #
-# There are 3 files that must all live in the same directory, and that directory must be
+# There are 3 files that usually all live in the same directory, and that directory must be
 # allowed to execute PowerShell scripts (https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.1)
+# Parameters are provided so that you can change the location of all files if they are not in the script directory
+# (but gee whizz man - just put the stuff all together so it works, OK?!?!?!?)
 #
-# To use the script you must first select the park designator regions you want to output in the POTAPrefixList.txt file.
+# To use the script you first select the park designator regions you want to output in the POTAPrefixList.txt file.
 # This file contains one line per valid POTA park designator prefix.
 #    ****  THEY ARE ALL COMMENTED OUT BY DEFAULT.  IF YOU CHANGE NOTHING - NO FILES WILL BE GENERATED ********
 #
@@ -16,7 +17,6 @@
 # The script takes some time to run, but it will output a line of text for each park it processes so you will know it is still running.
 #
 #
-#
 # ****** For advanced users ******
 # You can change the location of the POTAPrefixList.txt file or the path for the output file by passing the script the
 # parameters -prefixList$prefixList and -outputPath.
@@ -24,7 +24,6 @@
 # Generate_POTA_KMLs.ps1 is just a batch script which calls CreateKML.ps1 repeatedly.
 # You can call this script directly if you wish to combine multiple regions into one KML file, or change the filenames/paths
 # Documentation for CreateKML.ps1 is in the comments in that file
-
 
 
 #Declare the possible parameters for this script.  The defaults assume that everything is local

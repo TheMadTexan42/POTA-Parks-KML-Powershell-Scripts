@@ -1,10 +1,7 @@
 # This is the script that parses the CSV file of parks from POTA and generates corresponding KML files.
-#
-# When called from Generate_POTA_KMLs.ps1, it is required that the downloaded CSV file be called
-# all_parks_ext.csv (this is the default name when it is downloaded) and that it be located in the same directory as this script.
-#
+##
 # There are parameters that allow you to control both the input and output file name/path, as well as what park
-# designators are processed.  The outputFile and Prefix parameters are utilized by Generate_POTA_KMLs.ps1
+# designators are processed. 
 #
 
 
