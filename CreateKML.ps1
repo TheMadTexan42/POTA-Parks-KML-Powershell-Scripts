@@ -95,7 +95,11 @@ New-Item -ItemType "file" -Path "$outputFile" -Force
 #Put all of the KML header info into the new file
 InitKML($outputFile)
 
+$sb = New-Object -TypeName "System.Text.StringBuilder";
+
 #Load and parse the CSV file of parks downloaded from POTA
+#The counter lets us flush the string builder periodically.
+$counter = 0;
 Import-Csv $inputFile | ForEach-Object {
     #This is done for every park.
     #The Name of the park is in a column called "reference" in the CSV
@@ -107,20 +111,39 @@ Import-Csv $inputFile | ForEach-Object {
     #Check to see if the prefix is either an asterisk, or in the list of prefixes we specfied that we want
     if (($Prefixes -eq "*" ) -or ($Prefixes -contains $thisPrefix[0]))
     {
-        #We want this park in the output, so generate the KML as a string
-        $description = $_.name -replace '&', 'and'
-        $kml = ""
-        $kml = "<Placemark>`n"
-        $kml += "<name>" + $parkname + "</name>`n"
-        $kml += "<description>" +$description + " </description>`n"
-        $kml += "<styleUrl>#m_ylw-pushpin</styleUrl>`n"
-        $kml += "<Point>`n"
-        $kml += "<coordinates>" + $_.longitude + "," + $_.latitude + ",0</coordinates>`n"
-        $kml +="</Point>`n"
-        $kml +="</Placemark>"
+        #We'll process this park so increment the counter
+        $counter += 1;
 
-        #Add this park to the KML file
-        Add-Content $outputFile $kml
+        #& is not a valid KML character so replace it with the word AND
+        $description = $_.name -replace '&', 'and'
+
+        #Append all of the KML for this park to the StringBuilder object
+#        [void] $sb.AppendLine();
+        [void] $sb.AppendLine('<Placemark>');
+        [void] $sb.Append('<name>'); 
+        [void] $sb.Append($parkname);
+        [void] $sb.AppendLine('</name>');
+        [void] $sb.Append('<description>');
+        [void] $sb.Append($description);
+        [void] $sb.AppendLine('</description>');
+        [void] $sb.AppendLine('<styleUrl>#m_ylw-pushpin</styleUrl>');
+        [void] $sb.AppendLine('<Point>');
+        [void] $sb.Append('<coordinates>');
+        [void] $sb.Append($_.longitude);
+        [void] $sb.Append(',');
+        [void] $sb.Append($_.latitude);
+        [void] $sb.AppendLine(',0</coordinates>');
+        [void] $sb.AppendLine('</Point>');
+        [void] $sb.AppendLine('</Placemark>');
+
+        #Every 500 parks, flush the string builder to the file
+        if($counter -ge 500)
+        {
+            Write-Host "Flushing builder"
+            Add-Content $outputFile $sb.ToString();
+            $sb.Clear();
+            $counter = 0;
+        }
 
         #Printe a status message to the console.  This script takes a while and seeing the park designators go by
         #lets the user know that it's still doing something productive.
@@ -128,9 +151,13 @@ Import-Csv $inputFile | ForEach-Object {
     }
 }
 
+
 #The list of parks is exhausted, so finalize the KML file with the required closing KML tags/footer
-Add-Content $outputFile "</Document>"
-Add-Content $outputFile "</kml>"
+[void] $sb.AppendLine('</Document>');
+[void] $sb.AppendLine('</kml>');
+
+#$write the last of the KML to the file
+Add-Content $outputFile $sb.ToString();
 
 #Tell the world we're finished
 Write-Host "Done!"
