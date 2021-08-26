@@ -1,6 +1,6 @@
 # POTA-Parks-KML-Powershell-Scripts
 
-These are Powershell scripts.  They process the CSV park list file provided by POTA into one or more KML files for use with Google Earth and other mapping programs.
+These are Powershell scripts.  They process the CSV park list file provided by POTA (which you must figure out how to obtain yourself) into one or more KML files for use with Google Earth and other mapping programs.
 
 No warranty of any kind is provided.  The only guarantee you'll get is that these will be hard to use - if they work at all.
 
