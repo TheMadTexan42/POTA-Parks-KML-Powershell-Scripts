@@ -24,7 +24,7 @@
 ;HS
 ;I
 ;JA
-;K
+K
 ;LX
 ;OA
 ;OE
@@ -39,7 +39,7 @@
 ;TF
 ;TI
 ;V3
-;VE
+VE
 ;VK
 ;XE
 ;YB

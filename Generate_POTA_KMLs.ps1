@@ -19,7 +19,7 @@
 #
 # ****** For advanced users ******
 # You can change the location of the POTAPrefixList.txt file or the path for the output file by passing the script the
-# parameters -inputFile and -outputPath.
+# parameters -prefixList$prefixList and -outputPath.
 #
 # Generate_POTA_KMLs.ps1 is just a batch script which calls CreateKML.ps1 repeatedly.
 # You can call this script directly if you wish to combine multiple regions into one KML file, or change the filenames/paths
@@ -31,14 +31,17 @@
 [CmdletBinding()]
 param (  
     [Parameter()]
-    [String]$inputFile = ".\POTAPrefixList.txt",
+    [String]$prefixList = ".\POTAPrefixList.txt",
+
+    [Parameter()]
+    [String]$parkList = ".\all_parks_ext.csv"
 
     [Parameter()]
     [String]$outputPath = ".\"
 )
 
 #load the list of prefixes from the file (default is .\POTAPrefixList.txt)
-$prefixes = Get-Content $inputFile
+$prefixes = Get-Content $prefixList
 #Go through every line in the file
 foreach ($line in $prefixes)
 {
@@ -49,8 +52,7 @@ foreach ($line in $prefixes)
         $outfile = $outputPath + $line + "_parks.kml"
 
         #Call the script to parse the park list and output just this prefix
-        #NOTE - there is no option here to change the path to .\all_parks_ext.csv 
-        #the list of parks must be in the same directory as CreateKML.ps1
-        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line
+        #the defaults assume that everything is located in the script source directory
+        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
     }
 }

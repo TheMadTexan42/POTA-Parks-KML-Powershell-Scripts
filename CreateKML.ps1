@@ -28,7 +28,7 @@ param (
 #The last parameter is the full path to the CSV list of parks.  The default is the name with which the file downloads from POTA
 #and a directory that is the same as where this script resides.
     [Parameter()]
-    [String]$inputFile = ".\all_parks_ext.csv"
+    [String]$parkList = ".\all_parks_ext.csv"
 )
 
 function InitKML ($infile) 
@@ -84,9 +84,9 @@ function InitKML ($infile)
 
 #Start of the main script
 #Check to see if the list of parks is readable
-if (-not (Test-Path -Path $inputFile)) {
+if (-not (Test-Path -Path $parkList)) {
     #We couldn't find the list, so print a useful message and quit
-    Write-Host "Could not find the CSV list of parks: " $inputFile
+    Write-Host "Could not find the CSV list of parks: " $parkList
     exit
 }
 
@@ -100,7 +100,7 @@ $sb = New-Object -TypeName "System.Text.StringBuilder";
 #Load and parse the CSV file of parks downloaded from POTA
 #The counter lets us flush the string builder periodically.
 $counter = 0;
-Import-Csv $inputFile | ForEach-Object {
+Import-Csv $parkList | ForEach-Object {
     #This is done for every park.
     #The Name of the park is in a column called "reference" in the CSV
     $parkname = $_.reference
