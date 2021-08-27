@@ -1,4 +1,4 @@
-5B
+;5B
 ;8P
 ;9A
 ;9M
@@ -24,7 +24,7 @@
 ;HS
 ;I
 ;JA
-K
+;K
 ;LX
 ;OA
 ;OE
@@ -39,7 +39,7 @@ K
 ;TF
 ;TI
 ;V3
-VE
+;VE
 ;VK
 ;XE
 ;YB
