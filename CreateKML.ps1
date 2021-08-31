@@ -120,9 +120,11 @@ Import-Csv $parkList | ForEach-Object {
         [void] $sb.Append('<name>'); 
         [void] $sb.Append($parkname);
         [void] $sb.AppendLine('</name>');
-        [void] $sb.Append('<description>');
+        [void] $sb.Append('<description> <a href="https://pota.app/#/park/');
+        [void] $sb.Append($parkname);
+        [void] $sb.Append('">');        
         [void] $sb.Append($description);
-        [void] $sb.AppendLine('</description>');
+        [void] $sb.AppendLine('</a> </description>');
         [void] $sb.AppendLine('<styleUrl>#m_ylw-pushpin</styleUrl>');
         [void] $sb.AppendLine('<Point>');
         [void] $sb.Append('<coordinates>');
