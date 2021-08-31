@@ -33,7 +33,7 @@ param (
     [String]$prefixList = ".\POTAPrefixList.txt",
 
     [Parameter()]
-    [String]$parkList = ".\all_parks_ext.csv"
+    [String]$parkList = ".\all_parks_ext.csv",
 
     [Parameter()]
     [String]$outputPath = ".\"
