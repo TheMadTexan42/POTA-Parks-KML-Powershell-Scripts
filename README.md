@@ -4,7 +4,8 @@ Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshel
 
 1.  Download the park CSV file from POTA and put it in the same directory as the scripts.
 2.  Make sure you're setup with permissions to execute scripts from the directory where you put everything.
-3.  Edit the file POTAPrefixList.txt.   Remove the semi-colon ; charater from the beginning of the line for every region you want to put into a KML file
+3.  Edit the file POTAPrefixList.txt.   Remove the semi-colon ; charater from the beginning of the line for every region you want to put into a KML file.  This file
+    contains only the prefixes valid for a park designator for POTA.  You can add lines to this file if it is out of date and there are new prefixes available.
 4.  Run Generate_POTA_KMLs.ps1
 
 These are Powershell scripts.  They process the CSV park list file provided by POTA (which you must figure out how to obtain yourself) into one or more KML files for use with Google Earth and other mapping programs.
