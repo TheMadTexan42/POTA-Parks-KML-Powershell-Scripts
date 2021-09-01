@@ -115,7 +115,6 @@ Import-Csv $parkList | ForEach-Object {
         $description = $_.name -replace '&', 'and'
 
         #Append all of the KML for this park to the StringBuilder object
-#        [void] $sb.AppendLine();
         [void] $sb.AppendLine('<Placemark>');
         [void] $sb.Append('<name>'); 
         [void] $sb.Append($parkname);
@@ -156,8 +155,4 @@ Import-Csv $parkList | ForEach-Object {
 
 #$write the last of the KML to the file
 Add-Content $outputFile $sb.ToString();
-
-#Tell the world we're finished
-Write-Host "Done!"
-
 

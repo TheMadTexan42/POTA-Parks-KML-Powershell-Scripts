@@ -10,7 +10,7 @@
 # This file contains one line per valid POTA park designator prefix.
 #    ****  THEY ARE ALL COMMENTED OUT BY DEFAULT.  IF YOU CHANGE NOTHING - NO FILES WILL BE GENERATED ********
 #
-# To select a region for output, delete the semi-colon ; character at the beginning of the line for that prefix.  You can generate
+# To select a region for output, delete the pound (hashtag) # character at the beginning of the line for that prefix.  You can generate
 # as many regions at a time as you want by uncommenting more than one line.
 #
 # Save the edited POTAPrefixList.txt file and then run the generation script using .\Generate_POTA_KMLs.ps1
@@ -19,7 +19,7 @@
 #
 # ****** For advanced users ******
 # You can change the location of the POTAPrefixList.txt file or the path for the output file by passing the script the
-# parameters -prefixList$prefixList and -outputPath.
+# parameters -prefixList and -outputPath.
 #
 # Generate_POTA_KMLs.ps1 is just a batch script which calls CreateKML.ps1 repeatedly.
 # You can call this script directly if you wish to combine multiple regions into one KML file, or change the filenames/paths
@@ -45,13 +45,19 @@ $prefixes = Get-Content $prefixList
 foreach ($line in $prefixes)
 {
     #check for a semi-colon anywhere in the line.  If one is found, skip this line
-    if (-not ($line.contains(";")))
+    if ( $line.contains("#") -or $line.Trim() -eq "" )
+    {
+        #This is not a useable line, so go to the next one
+        continue;
+    }
+    else 
     {
         #Generate the full path and filename for the parks starting with this prefix
-        $outfile = $outputPath + $line + "_parks.kml"
+        $outfile = $outputPath + $line.Trim() + "_parks.kml"
 
         #Call the script to parse the park list and output just this prefix
         #the defaults assume that everything is located in the script source directory
-        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
+        Write-Host $outfile
+        #        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
     }
 }
