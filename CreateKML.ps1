@@ -7,7 +7,6 @@
 
 [CmdletBinding()]
 param (  
-
 # parameter that specfies the name of the output KML file.  Generate_POTA_KMLs.ps1 passes this as {Designator}_parks.kml
 # by default, output will go to the same directory as this script and be called POTA_Parks.kml
     [Parameter()]
@@ -28,10 +27,8 @@ param (
     [String]$parkList = ".\all_parks_ext.csv"
 )
 
-function InitKML ($infile) 
-#InitKML puts all of the KML header information into the output file.  It's really just one big ass string.
-{
-    Add-Content $infile "<?xml version=""1.0"" encoding=""UTF-8""?>
+#The KML header information for the output file.  It's really just one big ass string.
+$KMLHeader = "<?xml version=""1.0"" encoding=""UTF-8""?>
     <kml xmlns=""http://www.opengis.net/kml/2.2"" xmlns:gx=""http://www.google.com/kml/ext/2.2"" xmlns:kml=""http://www.opengis.net/kml/2.2"" xmlns:atom=""http://www.w3.org/2005/Atom"">
     <Document>
         <name>Parks.kml</name>
@@ -75,86 +72,71 @@ function InitKML ($infile)
                 <key>highlight</key>
                 <styleUrl>#s_ylw-pushpin_hl</styleUrl>
             </Pair>
-        </StyleMap>
-    "
-}
+        </StyleMap>"
 
 #Start of the main script
 #Check to see if the list of parks is readable
 if (-not (Test-Path -Path $parkList)) {
-    #We couldn't find the list, so print a useful message and quit
     Write-Host "Could not find the CSV list of parks: " $parkList
-    exit
+    Write-Host "Downloading the file from POTA"
+
+    Invoke-WebRequest -Uri "https://pota.app/all_parks_ext.csv" -OutFile $parkList
 }
 
 #Generate the output KML file.  The -Force attribute causes it to overwrite an existing file if found.
 New-Item -ItemType "file" -Path "$outputFile" -Force
-#Put all of the KML header info into the new file
-InitKML($outputFile)
 
-$sb = New-Object -TypeName "System.Text.StringBuilder";
+#Create a String Builder so that we don't have to work directly with the file for every line
+$sb = New-Object -TypeName "System.Text.StringBuilder"
+
+#Put all of the KML header info into the new file
+[void]$sb.AppendLine($KMLHeader)
 
 #Load and parse the CSV file of parks downloaded from POTA
-#The counter lets us flush the string builder periodically.
-$counter = 0;
-Import-Csv $parkList | ForEach-Object {
+Import-Csv $parklist | ForEach-Object {
     #This is done for every park.
     #The Name of the park is in a column called "reference" in the CSV
     $parkname = $_.reference
 
     #Extract the prefix of the park designator by looking for the hypen character
+    #thisPrefix becomes an array where [0] is the prefix and [1] is the park number
     $thisPrefix = $parkname -split "-"
 
     #Check to see if the prefix is either an asterisk, or in the list of prefixes we specfied that we want
-    if (($Prefixes -eq "*" ) -or ($Prefixes -contains $thisPrefix[0]))
-    {
-        #We'll process this park so increment the counter
-        $counter += 1;
-
+    if ( ($thisPrefix[0] -in $Prefixes) -or ($Prefixes -eq '*') )
+   {
         #& is not a valid KML character so replace it with the word AND
+        $parkname = $parkname -replace '&', 'and'
         $description = $_.name -replace '&', 'and'
 
         #Append all of the KML for this park to the StringBuilder object
-        [void] $sb.AppendLine('<Placemark>');
-        [void] $sb.Append('<name>'); 
-        [void] $sb.Append($parkname);
-        [void] $sb.AppendLine('</name>');
-        [void] $sb.Append('<description> <a href="https://pota.app/#/park/');
-        [void] $sb.Append($parkname);
-        [void] $sb.Append('">');        
-        [void] $sb.Append($description);
-        [void] $sb.AppendLine('</a> </description>');
-        [void] $sb.AppendLine('<styleUrl>#m_ylw-pushpin</styleUrl>');
-        [void] $sb.AppendLine('<Point>');
-        [void] $sb.Append('<coordinates>');
-        [void] $sb.Append($_.longitude);
-        [void] $sb.Append(',');
-        [void] $sb.Append($_.latitude);
-        [void] $sb.AppendLine(',0</coordinates>');
-        [void] $sb.AppendLine('</Point>');
-        [void] $sb.AppendLine('</Placemark>');
-
-        #Every 500 parks, flush the string builder to the file
-        if($counter -ge 500)
-        {
-            Add-Content -Path $outputFile -Value $sb.ToString();
-            $sb.Length = 0;
-            $counter = 0;
-
-            #Printe a status message to the console.  This script takes a while and seeing the park designators go by
-            #lets the user know that it's still doing something productive.
-            Write-Host "Processed park: " $parkname
-        }
-    }
+        [void] $sb.AppendLine('<Placemark>')
+        [void] $sb.Append('<name>')
+        [void] $sb.Append($parkname)
+        [void] $sb.AppendLine('</name>')
+        [void] $sb.Append('<description> <a href="https://pota.app/#/park/')
+        [void] $sb.Append($parkname)
+        [void] $sb.Append('">')     
+        [void] $sb.Append($description)
+        [void] $sb.AppendLine('</a> </description>')
+        [void] $sb.AppendLine('<styleUrl>#m_ylw-pushpin</styleUrl>')
+        [void] $sb.AppendLine('<Point>')
+        [void] $sb.Append('<coordinates>')
+        [void] $sb.Append($_.longitude)
+        [void] $sb.Append(',')
+        [void] $sb.Append($_.latitude)
+        [void] $sb.AppendLine(',0</coordinates>')
+        [void] $sb.AppendLine('</Point>')
+        [void] $sb.AppendLine('</Placemark>')
+   }
 }
 
 
 #The list of parks is exhausted, so finalize the KML file with the required closing KML tags/footer
-[void] $sb.AppendLine('</Document>');
-[void] $sb.AppendLine('</kml>');
+[void] $sb.AppendLine('</Document>')
+[void] $sb.AppendLine('</kml>')
 
 #$write the last of the KML to the file
-Add-Content $outputFile $sb.ToString();
+Add-Content $outputFile $sb.ToString()
 
-#Write the final status message
-Write-Host "Finished with " $thisPrefix[0] " parks!  Last park processed was: " $parkname
+Write-Host "Completed " $outputFile

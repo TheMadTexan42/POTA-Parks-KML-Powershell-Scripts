@@ -56,6 +56,11 @@ foreach ($line in $prefixes)
 
         #Call the script to parse the park list and output just this prefix
         #the defaults assume that everything is located in the script source directory
-        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
+        #.\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
+        $command = '.\CreateKML.ps1 -outputFile ' + $outfile + ' -Prefixes ' + $line + ' -parkList ' + $parkList
+        Write-Host $command
+        Start-Process 'powershell.exe' -ArgumentList $command
     }
 }
+
+Write-Host "All processes launched"
