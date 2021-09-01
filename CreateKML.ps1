@@ -140,11 +140,11 @@ Import-Csv $parkList | ForEach-Object {
             Add-Content -Path $outputFile -Value $sb.ToString();
             $sb.Length = 0;
             $counter = 0;
-        }
 
-        #Printe a status message to the console.  This script takes a while and seeing the park designators go by
-        #lets the user know that it's still doing something productive.
-        Write-Host "Processed park " $parkname
+            #Printe a status message to the console.  This script takes a while and seeing the park designators go by
+            #lets the user know that it's still doing something productive.
+            Write-Host "Processed park: " $parkname
+        }
     }
 }
 
@@ -156,3 +156,5 @@ Import-Csv $parkList | ForEach-Object {
 #$write the last of the KML to the file
 Add-Content $outputFile $sb.ToString();
 
+#Write the final status message
+Write-Host "Finished with " $thisPrefix[0] " parks!  Last park processed was: " $parkname
