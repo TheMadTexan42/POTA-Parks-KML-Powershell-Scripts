@@ -44,10 +44,9 @@ $prefixes = Get-Content $prefixList
 #Go through every line in the file
 foreach ($line in $prefixes)
 {
-    #check for a semi-colon anywhere in the line.  If one is found, skip this line
-    if ( $line.contains("#") -or $line.Trim() -eq "" )
+    #check for a comment character anywhere in the line, or a blank line.  If one is found, skip this line
+    if ( ($line.contains("#")) -or ($line.Trim() -eq "") )
     {
-        #This is not a useable line, so go to the next one
         continue;
     }
     else 
@@ -57,7 +56,6 @@ foreach ($line in $prefixes)
 
         #Call the script to parse the park list and output just this prefix
         #the defaults assume that everything is located in the script source directory
-        Write-Host $outfile
-        #        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
+        .\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
     }
 }
