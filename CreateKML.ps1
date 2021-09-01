@@ -137,8 +137,8 @@ Import-Csv $parkList | ForEach-Object {
         #Every 500 parks, flush the string builder to the file
         if($counter -ge 500)
         {
-            Add-Content $outputFile $sb.ToString();
-            $sb.Clear();
+            Add-Content -Path $outputFile -Value $sb.ToString();
+            $sb.Length = 0;
             $counter = 0;
         }
 
