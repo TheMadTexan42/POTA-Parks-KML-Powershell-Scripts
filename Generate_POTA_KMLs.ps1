@@ -59,8 +59,8 @@ foreach ($line in $prefixes)
         #.\CreateKML.ps1 -outputFile $outfile -Prefixes $line -parkList $parkList
         $command = '.\CreateKML.ps1 -outputFile ' + $outfile + ' -Prefixes ' + $line + ' -parkList ' + $parkList
         Write-Host $command
-        Start-Process 'powershell.exe' -ArgumentList $command
+        Start-Process 'powershell.exe' -ArgumentList $command -NoNewWindow
     }
 }
 
-Write-Host "All processes launched"
+Write-Host "All processes launched.  Press RETURN after a minute or so to get your prompt back."
