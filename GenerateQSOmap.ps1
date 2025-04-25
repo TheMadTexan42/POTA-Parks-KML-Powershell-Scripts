@@ -1,3 +1,14 @@
+# This script generates a KML file from an ADIF file containing QSO records. Usable for importing into Google Earth or other mapping software.
+# You can specify the ADIF input file, KML output file, operating grid, and line drawing option as command line parameters.
+# If parameters are not specified, the script will prompt for them interactively.
+
+param(
+    [string]$InputADIF,
+    [string]$OutputKML,
+    [string]$OperatingGrid,
+    [switch]$DrawLines
+)
+
 # Color table for US amateur bands
 $bandColors = @{
     "160M" = "ff0000"; # Red
@@ -204,33 +215,45 @@ function Process-ADIFFile {
     Write-Host "KML file generated: $outputKMLPath"
 }
 
-# Prompt user for input ADIF file path
+# Set defaults and prompt only if not provided as parameters
 $currentDirectory = (Get-Location).Path
 $defaultADIFPath = Join-Path -Path $currentDirectory -ChildPath "QSOs.adif"
-Write-Host "Enter the path to the ADIF file (default: $defaultADIFPath):"
-$adifFilePath = Read-Host "ADIF file path"
-
-if ([string]::IsNullOrWhiteSpace($adifFilePath)) {
-    $adifFilePath = $defaultADIFPath
-}
-
-# Prompt user for output KML file path
 $defaultKMLPath = Join-Path -Path $currentDirectory -ChildPath "qsomap.kml"
-Write-Host "Enter the path to save the KML file (default: $defaultKMLPath):"
-$outputKMLPath = Read-Host "KML file path"
 
-if ([string]::IsNullOrWhiteSpace($outputKMLPath)) {
-    $outputKMLPath = $defaultKMLPath
+if (-not $InputADIF) {
+    Write-Host "Enter the path to the ADIF file (default: $defaultADIFPath):"
+    $adifFilePath = Read-Host "ADIF file path"
+    if ([string]::IsNullOrWhiteSpace($adifFilePath)) {
+        $adifFilePath = $defaultADIFPath
+    }
+} else {
+    $adifFilePath = $InputADIF
 }
 
-# Prompt user for their Operating Grid Square
-Write-Host "Enter your Operating Grid Square (e.g., FN31):"
-$operatingGrid = Read-Host "Operating Grid Square"
+if (-not $OutputKML) {
+    Write-Host "Enter the path to save the KML file (default: $defaultKMLPath):"
+    $outputKMLPath = Read-Host "KML file path"
+    if ([string]::IsNullOrWhiteSpace($outputKMLPath)) {
+        $outputKMLPath = $defaultKMLPath
+    }
+} else {
+    $outputKMLPath = $OutputKML
+}
 
-# Prompt user to enable or disable line drawing
-Write-Host "Do you want to include lines connecting the Operating Grid to QSO records? (Yes/No)"
-$drawLinesResponse = Read-Host "Enable Line Drawing"
-$drawLines = $drawLinesResponse -match "^(Yes|Y)$"
+if (-not $OperatingGrid) {
+    Write-Host "Enter your Operating Grid Square (e.g., FN31):"
+    $operatingGrid = Read-Host "Operating Grid Square"
+} else {
+    $operatingGrid = $OperatingGrid
+}
+
+if (-not $PSBoundParameters.ContainsKey('DrawLines')) {
+    Write-Host "Do you want to include lines connecting the Operating Grid to QSO records? (Yes/No)"
+    $drawLinesResponse = Read-Host "Enable Line Drawing"
+    $drawLines = $drawLinesResponse -match "^(Yes|Y)$"
+} else {
+    $drawLines = $DrawLines.IsPresent
+}
 
 # Process the ADIF file
 Process-ADIFFile -filePath $adifFilePath -outputKMLPath $outputKMLPath -operatingGrid $operatingGrid -drawLines $drawLines
