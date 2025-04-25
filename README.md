@@ -1,5 +1,29 @@
 # POTA-Parks-KML-Powershell-Scripts
 
+# GenerateQSOmap.ps1 Usage Documentation
+This PowerShell script generates a KML file from an ADIF file containing QSO (contact) records. The KML file can be imported into Google Earth or other mapping software to visualize QSO locations and, optionally, draw lines from your operating grid to each contact.
+
+## Usage
+You can run the script with or without command line parameters. If parameters are omitted, the script will prompt you for the required information.
+
+### Command Line Parameters
+
+- `-InputADIF <path>`  
+  Path to the input ADIF file containing QSO records.
+
+- `-OutputKML <path>`  
+  Path where the generated KML file will be saved.
+
+- `-OperatingGrid <grid>`  
+  Your operating grid square (e.g., FN31).
+
+- `-DrawLines`  
+  (Switch) If specified, lines will be drawn from your operating grid to each QSO location.  The color of the lines is determined by the band.  There is table that specifies the color associated with each band at the top of the script.
+
+
+
+
+#Generate_POTA_KMLs.ps1 - Used to generate a KML set of pins representing all POTA entites for specified prefixes.
 Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshell:
 
 1.  Download the park CSV file from POTA and put it in the same directory as the scripts.
