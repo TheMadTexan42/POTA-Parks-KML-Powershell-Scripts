@@ -32,12 +32,45 @@ param (
     [Parameter()]
     [String]$prefixList = ".\POTAPrefixList.txt",
 
-    [Parameter()]
-    [String]$parkList = ".\all_parks_ext.csv",
+
+        [Parameter()]
+        [String]$parkList,
 
     [Parameter()]
     [String]$outputPath = ".\"
 )
+
+# If $parkList is not provided, download the latest CSV from the POTA website
+if (-not $parkList) {
+    $parkList = Join-Path -Path (Get-Location) -ChildPath "all_parks_ext.csv"
+    if (-not (Test-Path $parkList)) {
+        Write-Host "Downloading latest park list from https://pota.app/all_parks_ext.csv ..."
+        try {
+            Invoke-WebRequest -Uri "https://pota.app/all_parks_ext.csv" -OutFile $parkList -UseBasicParsing
+            Write-Host "Downloaded park list to $parkList"
+        } catch {
+            Write-Error "Failed to download park list: $_"
+            exit 1
+        }
+    } else {
+        Write-Host "Using existing park list at $parkList"
+    }
+}
+
+
+# Check if prefixList file exists and is valid (at least one uncommented, non-empty line)
+if (-not (Test-Path $prefixList) -or -not ((Get-Content $prefixList | Where-Object { ($_ -notmatch '^#') -and ($_ -match '\S') }).Count)) {
+    Write-Host "Prefix list file '$prefixList' is missing or does not contain any uncommented prefixes."
+    $response = Read-Host "Would you like to generate a new prefix list now? (Y/N)"
+    if ($response -match '^(Y|y)') {
+        & .\Generate_Prefix_List.ps1
+        Write-Host "Prefix list generated. Please edit '$prefixList' to select desired prefixes, then re-run this script."
+        exit 0
+    } else {
+        Write-Host "Aborted. Please provide a valid prefix list file."
+        exit 1
+    }
+}
 
 #load the list of prefixes from the file (default is .\POTAPrefixList.txt)
 $prefixes = Get-Content $prefixList

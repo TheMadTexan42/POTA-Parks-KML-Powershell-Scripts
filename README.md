@@ -1,5 +1,36 @@
 # POTA-Parks-KML-Powershell-Scripts
 
+## Automatic Download of Park CSV File
+
+You no longer need to manually download the park CSV file from POTA. If you do not provide a CSV file path when running `Generate_POTA_KMLs.ps1`, the script will automatically download the latest version from https://pota.app/all_parks_ext.csv and use it for processing.
+
+## Generating the Prefix List File
+
+To generate or update the list of valid POTA park prefixes (`POTAPrefixList.txt`), run the script:
+
+```
+./Generate_Prefix_List.ps1
+```
+
+This script will extract all unique prefixes from the current `all_parks_ext.csv` file and write them to `POTAPrefixList.txt` as commented lines. If the file already exists, you will be prompted before it is overwritten. Remove the `#` character from any line to enable that prefix for KML generation.
+
+---
+
+Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshell:
+
+1.  Download the park CSV file from POTA and put it in the same directory as the scripts. (Or let the script download it automatically.)
+2.  Make sure you're setup with permissions to execute scripts from the directory where you put everything.
+3.  Edit the file POTAPrefixList.txt.   Remove the number/pound/hashtag # charater from the beginning of the line for every region you want to put into a KML file.  This file
+    contains only the prefixes valid for a park designator for POTA.  You can add lines to this file if it is out of date and there are new prefixes available.
+4.  Run Generate_POTA_KMLs.ps1
+
+These are Powershell scripts.  They process the CSV park list file provided by POTA (which you must figure out how to obtain yourself) into one or more KML files for use with Google Earth and other mapping programs.
+
+No warranty of any kind is provided.  The only guarantee you'll get is that these will be hard to use - if they work at all.
+
+These scripts do not connect to POTA directly in any way, an no modifications to do so are permitted.  
+When you do connect to POTA, you do so under the obligation to follow all POTA rules and guidelines.  ANY abuse of the POTA system will not be tolerated and will result in your immediate loss of any and all rights to possess or use these scripts.
+
 Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshell:
 
 1.  Download the park CSV file from POTA and put it in the same directory as the scripts.
