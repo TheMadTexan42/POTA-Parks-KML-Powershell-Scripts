@@ -1,47 +1,161 @@
-# POTA-Parks-KML-Powershell-Scripts
+# CSV_to_KML.ps1 - POTA Parks KML Converter
 
-## Automatic Download of Park CSV File
+A unified PowerShell script that converts Parks on the Air (POTA) CSV data into KML files for use with Google Earth and other mapping applications.
 
-You no longer need to manually download the park CSV file from POTA. If you do not provide a CSV file path when running `Generate_POTA_KMLs.ps1`, the script will automatically download the latest version from https://pota.app/all_parks_ext.csv and use it for processing.
+## Overview
 
-## Generating the Prefix List File
+This script streamlines the process of creating KML files from POTA park data by combining park data download, prefix selection, and KML generation into a single interactive workflow.
 
-To generate or update the list of valid POTA park prefixes (`POTAPrefixList.txt`), run the script:
+## Features
 
+- **Interactive park data management**: Automatically prompts to download the latest park list from POTA
+- **Automatic prefix list generation**: Creates a list of all valid park prefixes from the CSV data
+- **Selective region processing**: Generate KML files for only the regions you're interested in
+- **Efficient processing**: Uses StringBuilder for optimal performance when processing large datasets
+- **Progress tracking**: Displays progress messages during KML generation
+
+## Requirements
+
+- PowerShell 5.1 or later
+- Internet connection (for downloading park data)
+- Execution policy set to allow script execution ([see Microsoft docs](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy))
+
+## Quick Start
+
+1. **Run the script**:
+   ```powershell
+   .\CSV_to_KML.ps1
+   ```
+
+2. **Follow the interactive prompts**:
+   - The script will check for the park data file (`all_parks_ext.csv`)
+   - If found, you can choose to download a fresh copy or use the existing file
+   - If not found, you'll be prompted to download it
+
+3. **Select prefixes**:
+   - The script checks for `POTAPrefixList.txt`
+   - If it doesn't exist, it will be automatically generated
+   - If it exists, you can choose to use it or create a new one
+
+4. **Edit the prefix list**:
+   - Open `POTAPrefixList.txt` in any text editor
+   - Remove the `#` character from the prefixes you want to process
+   - Save the file
+
+   Example:
+   ```
+   # Before (no parks will be generated):
+   #K
+   #VE
+   
+   # After (will generate K_parks.kml and VE_parks.kml):
+   K
+   VE
+   ```
+
+5. **Run the script again**:
+   ```powershell
+   .\CSV_to_KML.ps1
+   ```
+   
+   The script will now generate KML files for your selected prefixes.
+
+## Workflow
+
+### Step 1: Park Data File Check
+- **File exists**: Shows when it was last downloaded and offers to download a fresh copy
+- **File missing**: Prompts to download from https://pota.app/all_parks_ext.csv
+
+### Step 2: Prefix List Check
+- **File exists**: Shows last modified date and offers to use existing or create new
+- **File missing**: Automatically generates a new prefix list with all prefixes commented out
+
+### Step 3: Prefix Selection Validation
+- Reads `POTAPrefixList.txt` and checks for uncommented lines
+- If no prefixes are selected, displays instructions and exits
+- If prefixes are found, proceeds to KML generation
+
+### Step 4: KML Generation
+- Generates one KML file per selected prefix
+- Files are named `{PREFIX}_parks.kml` (e.g., `K_parks.kml`, `VE_parks.kml`)
+- Displays progress messages every 500 parks
+- Shows completion status for each prefix
+
+## Parameters
+
+The script accepts optional parameters for advanced users:
+
+```powershell
+.\CSV_to_KML.ps1 [-prefixList <path>] [-parkList <path>] [-outputPath <path>]
 ```
-./Generate_Prefix_List.ps1
+
+### Parameters:
+- **`-prefixList`**: Path to the prefix list file (default: `.\POTAPrefixList.txt`)
+- **`-parkList`**: Path to the park CSV file (default: `.\all_parks_ext.csv`)
+- **`-outputPath`**: Directory where KML files will be saved (default: `.\`)
+
+### Example:
+```powershell
+.\CSV_to_KML.ps1 -outputPath "C:\KML_Files\"
 ```
 
-This script will extract all unique prefixes from the current `all_parks_ext.csv` file and write them to `POTAPrefixList.txt` as commented lines. If the file already exists, you will be prompted before it is overwritten. Remove the `#` character from any line to enable that prefix for KML generation.
+## Output Files
 
----
+Generated KML files will contain:
+- Park reference (e.g., K-0001)
+- Park name with clickable link to POTA website
+- Geographic coordinates (latitude/longitude)
+- Standard KML styling for Google Earth compatibility
 
-Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshell:
+## Common Park Prefixes
 
-1.  Download the park CSV file from POTA and put it in the same directory as the scripts. (Or let the script download it automatically.)
-2.  Make sure you're setup with permissions to execute scripts from the directory where you put everything.
-3.  Edit the file POTAPrefixList.txt.   Remove the number/pound/hashtag # charater from the beginning of the line for every region you want to put into a KML file.  This file
-    contains only the prefixes valid for a park designator for POTA.  You can add lines to this file if it is out of date and there are new prefixes available.
-4.  Run Generate_POTA_KMLs.ps1
+Some common POTA prefixes include:
+- **K** - United States
+- **VE** - Canada
+- **ZL** - New Zealand
+- **VK** - Australia
+- **G** - England
+- **DL** - Germany
 
-These are Powershell scripts.  They process the CSV park list file provided by POTA (which you must figure out how to obtain yourself) into one or more KML files for use with Google Earth and other mapping programs.
+See the generated `POTAPrefixList.txt` file for a complete list of available prefixes.
 
-No warranty of any kind is provided.  The only guarantee you'll get is that these will be hard to use - if they work at all.
+## Troubleshooting
 
-These scripts do not connect to POTA directly in any way, an no modifications to do so are permitted.  
-When you do connect to POTA, you do so under the obligation to follow all POTA rules and guidelines.  ANY abuse of the POTA system will not be tolerated and will result in your immediate loss of any and all rights to possess or use these scripts.
+### Script won't run
+Ensure your PowerShell execution policy allows script execution:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
-Directions are in the comments in the file Generate_POTA_KMLs.ps1.  In a nutshell:
+### Download fails
+- Check your internet connection
+- Verify the POTA website is accessible: https://pota.app/all_parks_ext.csv
+- Try downloading the file manually and placing it in the script directory
 
-1.  Download the park CSV file from POTA and put it in the same directory as the scripts.
-2.  Make sure you're setup with permissions to execute scripts from the directory where you put everything.
-3.  Edit the file POTAPrefixList.txt.   Remove the number/pound/hashtag # charater from the beginning of the line for every region you want to put into a KML file.  This file
-    contains only the prefixes valid for a park designator for POTA.  You can add lines to this file if it is out of date and there are new prefixes available.
-4.  Run Generate_POTA_KMLs.ps1
+### No KML files generated
+- Verify you've uncommented at least one prefix in `POTAPrefixList.txt`
+- Ensure the prefix exists in the park data (check the file for valid prefixes)
+- Confirm the CSV file contains valid park data
 
-These are Powershell scripts.  They process the CSV park list file provided by POTA (which you must figure out how to obtain yourself) into one or more KML files for use with Google Earth and other mapping programs.
+### KML file won't open in Google Earth
+- Ensure the file has a `.kml` extension
+- Verify the file isn't corrupted (should be a text file with XML content)
+- Try opening with a text editor to check the format
 
-No warranty of any kind is provided.  The only guarantee you'll get is that these will be hard to use - if they work at all.
+## File Descriptions
 
-These scripts do not connect to POTA directly in any way, an no modifications to do so are permitted.  
-When you do connect to POTA, you do so under the obligation to follow all POTA rules and guidelines.  ANY abuse of the POTA system will not be tolerated and will result in your immediate loss of any and all rights to possess or use these scripts.
+- **CSV_to_KML.ps1**: Main script file
+- **all_parks_ext.csv**: Park data downloaded from POTA (auto-generated)
+- **POTAPrefixList.txt**: List of park prefixes with selection markers (auto-generated)
+- **{PREFIX}_parks.kml**: Generated KML files for each selected prefix
+
+## Notes
+
+- The script uses the file creation date to track when the park list was downloaded
+- Park data is filtered by the two-character prefix at the beginning of the park reference
+- The script processes all parks in the CSV for each selected prefix
+- Generated KML files will overwrite existing files with the same name
+
+## License
+
+This script is provided as-is for use with Parks on the Air data. When accessing POTA resources, you must follow all POTA rules and guidelines.

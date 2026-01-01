@@ -208,7 +208,7 @@
 #UA
 #UG
 #UM
-#US
+US
 #UY
 #VC
 #VE
