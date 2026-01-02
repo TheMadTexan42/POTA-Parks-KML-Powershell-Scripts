@@ -1,9 +1,10 @@
 #  This is the list of valid POTA park prefixes
 #  Select a prefix to be included in the KML generation process
-#  by removing the # character at the begining of the line
+#  by removing the # character at the beginning of the line
 #
 #AD
 #AE
+#AF
 #AG
 #AI
 #AL
@@ -16,6 +17,7 @@
 #AU
 #AW
 #AX
+#AZ
 #BA
 #BB
 #BD
@@ -29,8 +31,10 @@
 #BM
 #BN
 #BO
+#BQ
 #BR
 #BS
+#BT
 #BV
 #BW
 #BY
@@ -69,6 +73,7 @@
 #ET
 #FI
 #FJ
+#FK
 #FM
 #FO
 #FR
@@ -100,6 +105,8 @@
 #IL
 #IM
 #IN
+#IQ
+#IR
 #IS
 #IT
 #JE
@@ -108,12 +115,15 @@
 #JP
 #K-
 #KE
+#KG
+#KI
 #KM
 #KN
 #KR
 #KW
 #KY
 #KZ
+#LA
 #LB
 #LC
 #LI
@@ -133,6 +143,8 @@
 #MH
 #MK
 #ML
+#MM
+#MN
 #MO
 #MP
 #MQ
@@ -140,6 +152,7 @@
 #MS
 #MT
 #MU
+#MV
 #MW
 #MX
 #MY
@@ -163,10 +176,12 @@
 #PF
 #PG
 #PH
+#PK
 #PL
 #PM
 #PR
 #PT
+#PW
 #PY
 #QA
 #RE
@@ -175,12 +190,14 @@
 #RU
 #RW
 #SA
+#SB
 #SC
 #SD
 #SE
 #SG
 #SH
 #SI
+#SJ
 #SK
 #SL
 #SM
@@ -191,6 +208,7 @@
 #ST
 #SV
 #SX
+#SY
 #SZ
 #TC
 #TD
